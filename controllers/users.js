@@ -73,7 +73,7 @@ const updateAvatar = ( req, res ) => {
   const userId = req.user.id;
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
   .then ((user) => {
-    res.send(user)
+    res.send({data: user})
   })
   .catch ((err)=>
   {
