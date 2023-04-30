@@ -23,6 +23,16 @@ const createCard = (req, res) => {
   })
 }
 
+const getCards = (req,res) => {
+  Card.find({})
+  .then ((cards) => {
+    res.send(cards);
+  })
+  .catch ((err)=>
+    res.status(500).send({message: 'На сервере произошла ошибка»'})
+  )}
+
+
 const getCard = (req,res) => {
   const { id } = req.params;
   Card.findById(id)
@@ -96,6 +106,7 @@ const dislikeCard = (req, res) => {
 module.exports = {
   createCard,
   getCard,
+  getCards,
   deleteCard,
   likeCard,
   dislikeCard,
