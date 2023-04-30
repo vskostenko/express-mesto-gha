@@ -14,7 +14,7 @@
     "url": "git+https://github.com/vskostenko/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Vadim Kostenko",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/vskostenko/express-mesto-gha/issues"
