@@ -9,9 +9,9 @@ const createUser = ( req, res ) => {
   })
   .catch ((err)=> {
   if (err.name === "ValidationError") {
-    res.status(400).send({message: `Переданы некорректные данные при создании пользователя.${err}`})
+    res.status(400).send({message: `Переданы некорректные данные при создании пользователя.`})
   } else {
-    res.status(500).send({message: `Ошибка по умолчанию.${err}`})
+    res.status(500).send({message: 'На сервере произошла ошибка»'})
   }
   })
 }
@@ -21,7 +21,7 @@ const getUsers = ( req, res ) => {
   User.find()
   .then ((users) => res.send(users))
   .catch ((err)=>
-  res.status(500).send({message: `Ошибка по умолчанию.${err}`})
+  res.status(500).send({message: 'На сервере произошла ошибка»'})
   )
 }
 
@@ -33,7 +33,7 @@ const getUserByid = ( req, res ) => {
   if ( err.name === 'CastError' ) {
     res.status(400).send({message: 'Пользователь по указанному _id не найден.'})
   } else {
-    res.status(500).send({message: `Ошибка по умолчанию.${err}`})
+    res.status(500).send({message: 'На сервере произошла ошибка»'})
   }
   })
 }
@@ -49,10 +49,11 @@ const updateProfile = ( req, res ) => {
   .catch ((err)=>
   {
     if ( err.name === 'ValidationError' ) {
-      res.status(400).send({message: `Переданы некорректные данные при обновлении профиля.${err.message}`})
+      res.status(400).send({message: `Переданы некорректные данные при обновлении профиля.`})
+    } else if ( err.name === 'CastError') {
+      res.status(404).send({message: `Пользователь с указанным _id не найден.`})
     } else {
-      res.status(404).send({message: `Пользователь с указанным _id не найден.${err}`})
-      res.status(500).send({message: `internal server error ${err}`})
+      res.status(500).send({message: 'На сервере произошла ошибка»'})
     }
     }
   )
@@ -69,11 +70,13 @@ const updateAvatar = ( req, res ) => {
   .catch ((err)=>
   {
     if ( err.name === 'ValidationError' ) {
-      res.status(400).send({message: `Not valid user data ${err.message}`})
+      res.status(400).send({message: `Переданы некорректные данные при обновлении аватара.`})
+    } else if ( err.name === 'CastError') {
+      res.status(404).send({message: `Пользователь с указанным _id не найден.`})
     } else {
-      res.status(500).send({message: `internal server error ${err}`})
+      res.status(500).send({message: `На сервере произошла ошибка»`})
     }
-  })
+    })
 }
 
 module.exports = {

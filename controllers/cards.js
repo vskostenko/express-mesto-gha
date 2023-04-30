@@ -18,7 +18,7 @@ const createCard = (req, res) => {
     if (err.name === "ValidationError") {
       res.status(400).send({message: `Переданы некорректные данные при создании карточки.${err}`})
     } else {
-      res.status(500).send({message: err})
+      res.status(500).send({message: 'На сервере произошла ошибка»'})
     }
   })
 }
@@ -33,7 +33,7 @@ const getCard = (req,res) => {
     if ( err.name === 'CastError' ) {
       res.status(400).send({message: 'Карточка с указанным _id не найдена'})
     } else {
-      res.status(500).send({message: err})
+      res.status(500).send({message: 'На сервере произошла ошибка»'})
     }}
   )}
 
@@ -48,7 +48,7 @@ const deleteCard = (req,res) => {
     if ( err.name === 'CastError' ) {
       res.status(400).send({message: 'Карточка с указанным _id не найдена'})
     } else {
-      res.status(500).send({message: err})
+      res.status(500).send({message: 'На сервере произошла ошибка»'})
     }}
   )}
 
@@ -65,11 +65,11 @@ const likeCard = (req, res) => {
   })
   .catch ((err)=> {
       if ( err.name === 'ValidationError' ) {
-        res.status(400).send({message: `Переданы некорректные данные при постановке лайка.${err.message}`})
+        res.status(400).send({message: `Переданы некорректные данные при постановке лайка`})
       } else if ( err.name === 'CastError') {
-        res.status(404).send({message: `Передан несуществующий _id карточки.${err}`})
+        res.status(404).send({message: `Передан несуществующий _id карточки`})
       } else {
-        res.status(500).send({message: `Ошибка по умолчанию ${err}`})
+        res.status(500).send({message: 'На сервере произошла ошибка»'})
       }}
   )}
 
@@ -85,11 +85,11 @@ const dislikeCard = (req, res) => {
   })
   .catch ((err)=> {
     if ( err.name === 'ValidationError' ) {
-      res.status(400).send({message: `Переданы некорректные данные при удалении лайка.${err.message}`})
+      res.status(400).send({message: `Переданы некорректные данные при удалении лайка.`})
     } else if ( err.name === 'CastError') {
-      res.status(404).send({message: `Передан несуществующий _id карточки.${err}`})
+      res.status(404).send({message: `Передан несуществующий _id карточки.`})
     } else {
-      res.status(500).send({message: `Ошибка по умолчанию ${err}`})
+      res.status(500).send({message: 'На сервере произошла ошибка»'})
     }}
   )}
 
