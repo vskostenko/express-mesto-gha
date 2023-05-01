@@ -69,12 +69,6 @@ const likeCard = (req, res) => {
   { $addToSet: { likes: req.user.id } }, // добавить _id в массив, если его там нет
   { new: true }
   )
-  .orFail(()=>{
-    const error = new Error({message: 'Карточка по указанному _id не найдена. Некорректный id'});
-    error.statusCode = 404;
-    error.name = "NotFound";
-    throw error;
-  })
   .then ((card) => {
     res.send(card);
   })
