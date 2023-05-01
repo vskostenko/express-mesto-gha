@@ -70,17 +70,17 @@ const likeCard = (req, res) => {
   { new: true }
   )
   .then ((card) => {
-    res.send(card);
+    if (card) {
+    return res.status(200).send(card);
+    }
+    return res.status(404).send({message:  'Карточка по указанному Id не найдена'});
   })
   .catch ((err)=> {
     console.log (err);
     if ( err.name === 'CastError' ) {
       res.status(400).send ({message: 'Карточка по указанному _id не найдена. Некорректный id'});
-    } else if (err.name === "NotFound") {
-      res.status(404).send({message: 'Карточка по указанному _id не найдена.'})
-    } else {
-      res.status(500).send({message: 'На сервере произошла ошибка»'})
     }
+      res.status(500).send({message: 'На сервере произошла ошибка»'})
     })
 }
 
