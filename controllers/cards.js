@@ -1,11 +1,5 @@
 const Card = require ('../models/card');
 
-const errorCodes = {
-  ERROR_INCORECT_DATA_CODE: 400,
-  ERROR_NOT_FOUND_CODE: 404,
-  ERROR_DEFAULT_CODE: 500,
-};
-
 const createCard = (req, res) => {
   console.log(req.body);
   const { id } = req.user;
@@ -52,7 +46,7 @@ const deleteCard = (req,res) => {
   console.log(id);
   Card.findByIdAndDelete(id).
   then ((card) => {
-    res.status(200).send({message: 'Card deleted'});
+    res.send({message: 'Card deleted'});
   })
   .catch ((err)=> {
     if ( err.name === 'CastError' ) {
