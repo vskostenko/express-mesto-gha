@@ -1,11 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = require('./routes');
-const bodyParser = require('body-parser');
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use((req,res,next) => {
   req.user = { id: '644c07022eba66f63001e9b8'};

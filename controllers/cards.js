@@ -1,4 +1,4 @@
-const Card = require ('../models/card');
+const Card = require('../models/card');
 
 const createCard = (req, res) => {
   console.log(req.body);
