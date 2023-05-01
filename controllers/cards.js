@@ -46,7 +46,10 @@ const deleteCard = (req,res) => {
   console.log(id);
   Card.findByIdAndDelete(id).
   then ((card) => {
-    res.send(card);
+    if (!card){
+      return res.status(404).send({message: 'Карточка с указанным _id не найдена'});
+    }
+    return res.send({message: 'Карточка удалена'})
   })
   .catch ((err)=> {
     if ( err.name === 'CastError' ) {
