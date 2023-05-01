@@ -16,7 +16,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(router);
 app.use((req, res, next) => {
-  res.status(404).send('Страница не найдена!');
+  res.status(404).send({message : 'Страница не найдена!'});
   next();
 });
 
