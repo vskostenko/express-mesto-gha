@@ -92,7 +92,7 @@ const dislikeCard = (req, res) => {
   { new: true })
   .then ((card) => {
     if (card) {
-    return res.status(200).send(card);
+    return res.send(card);
     }
     return res.status(404).send({message:  'Карточка по указанному Id не найдена'});
   })
