@@ -75,8 +75,8 @@ const likeCard = (req, res) => {
     error.name = "NotFound";
     throw error;
   })
-  .then (() => {
-    console.log('like');
+  .then ((card) => {
+    res.send(card);
   })
   .catch ((err)=> {
     console.log (err);
