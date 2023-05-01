@@ -91,18 +91,19 @@ const dislikeCard = (req, res) => {
   { $pull: { likes: req.user.id } }, // убрать _id из массива
   { new: true })
   .then ((card) => {
-    res.send(card);
-    console.log('like');
+    if (card) {
+    return res.status(200).send(card);
+    }
+    return res.status(404).send({message:  'Карточка по указанному Id не найдена'});
   })
   .catch ((err)=> {
-    if ( err.name === 'ValidationError' ) {
-      res.status(400).send({message: `Переданы некорректные данные при удалении лайка.`})
-    } else if ( err.name === 'CastError') {
-      res.status(404).send({message: `Передан несуществующий _id карточки.`})
-    } else {
+    console.log (err);
+    if ( err.name === 'CastError' ) {
+      res.status(400).send ({message: 'Карточка по указанному _id не найдена. Некорректный id'});
+    }
       res.status(500).send({message: 'На сервере произошла ошибка»'})
-    }}
-  )}
+    })
+}
 
 module.exports = {
   createCard,
