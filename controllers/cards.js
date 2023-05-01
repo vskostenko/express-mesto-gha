@@ -74,14 +74,15 @@ const likeCard = (req, res) => {
     console.log('like');
   })
   .catch ((err)=> {
-      if ( err.name === 'ValidationError' ) {
-        res.status(400).send({message: `Переданы некорректные данные при постановке лайка`})
-      } else if ( err.name === 'CastError') {
-        res.status(404).send({message: `Передан несуществующий _id карточки`})
-      } else {
-        res.status(500).send({message: 'На сервере произошла ошибка»'})
-      }}
-  )}
+    if ( err.name === 'CastError' ) {
+      res.status(400).send ({message: 'Карточка по указанному _id не найдена. Некорректный id'});
+    } else if (err.name === "NotFound") {
+      res.status(404).send({message: 'Карточка по указанному _id не найдена.'})
+    } else {
+      res.status(500).send({message: 'На сервере произошла ошибка»'})
+    }
+    })
+}
 
 const dislikeCard = (req, res) => {
 
