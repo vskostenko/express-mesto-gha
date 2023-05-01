@@ -67,13 +67,19 @@ const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
   req.params.id,
   { $addToSet: { likes: req.user.id } }, // добавить _id в массив, если его там нет
-  { new: true },
+  { new: true }
   )
-  .then ((card) => {
-    res.send(card);
+  .orFail(()=>{
+    const error = new Error({message: 'Карточка по указанному _id не найдена. Некорректный id'});
+    error.statusCode = 404;
+    error.name = "NotFound";
+    throw error;
+  })
+  .then (() => {
     console.log('like');
   })
   .catch ((err)=> {
+    console.log (err);
     if ( err.name === 'CastError' ) {
       res.status(400).send ({message: 'Карточка по указанному _id не найдена. Некорректный id'});
     } else if (err.name === "NotFound") {
