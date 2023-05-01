@@ -46,7 +46,7 @@ const deleteCard = (req,res) => {
   console.log(id);
   Card.findByIdAndDelete(id).
   then ((card) => {
-    res.send({message: 'Card deleted'});
+    res.send(card);
   })
   .catch ((err)=> {
     if ( err.name === 'CastError' ) {
