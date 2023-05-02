@@ -52,7 +52,7 @@ const updateProfile = (req, res) => {
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) {
-        return res.status(http2.constants.HTTP_STATUS_OK).send({ name, about});
+        return res.status(http2.constants.HTTP_STATUS_OK).send({ name, about });
       }
       return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Id пользователя не найден' });
     })
