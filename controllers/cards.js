@@ -1,3 +1,4 @@
+const http2 = require('http2');
 const Card = require('../models/card');
 
 const createCard = (req, res) => {
@@ -10,23 +11,24 @@ const createCard = (req, res) => {
     name, link, owner: id, likes, createdAt,
   })
     .then((newCard) => {
-      res.status(201).send(newCard);
+      res.status(http2.constants.HTTP_STATUS_CREATED).send(newCard);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: `Переданы некорректные данные при создании карточки.${err}` });
+        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании карточки.${err}` });
       } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка»' });
+        res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
       }
     });
 };
 
 const getCards = (req, res) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => {
       res.send(cards);
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка»' }));
+    .catch(() => res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' }));
 };
 
 const getCard = (req, res) => {
@@ -37,9 +39,9 @@ const getCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным _id не найдена' });
+        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка»' });
+        res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
       }
     });
 };
@@ -50,15 +52,15 @@ const deleteCard = (req, res) => {
   Card.findByIdAndDelete(id)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+        return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
       }
       return res.send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка с указанным _id не найдена' });
+        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка с указанным _id не найдена' });
       } else {
-        res.status(500).send({ message: 'На сервере произошла ошибка»' });
+        res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
       }
     });
 };
@@ -73,14 +75,14 @@ const likeCard = (req, res) => {
       if (card) {
         return res.status(200).send(card);
       }
-      return res.status(404).send({ message: 'Карточка по указанному Id не найдена' });
+      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка по указанному Id не найдена' });
     })
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
+        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
       }
-      res.status(500).send({ message: 'На сервере произошла ошибка»' });
+      res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
     });
 };
 
@@ -94,14 +96,14 @@ const dislikeCard = (req, res) => {
       if (card) {
         return res.send(card);
       }
-      return res.status(404).send({ message: 'Карточка по указанному Id не найдена' });
+      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка по указанному Id не найдена' });
     })
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
+        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
       }
-      res.status(500).send({ message: 'На сервере произошла ошибка»' });
+      res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
     });
 };
 
