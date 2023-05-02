@@ -35,14 +35,17 @@ const getCard = (req, res) => {
   const { id } = req.params;
   Card.findById(id)
     .then((card) => {
-      res.send(card);
+      if (card) {
+        return res.status(200).send(card);
+      }
+      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка по указанному Id не найдена' });
     })
     .catch((err) => {
+      console.log(err);
       if (err.name === 'CastError') {
-        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка с указанным _id не найдена' });
-      } else {
-        res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
+        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
       }
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
     });
 };
 
@@ -80,9 +83,9 @@ const likeCard = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
+        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
       }
-      res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
     });
 };
 
@@ -101,9 +104,9 @@ const dislikeCard = (req, res) => {
     .catch((err) => {
       console.log(err);
       if (err.name === 'CastError') {
-        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
+        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
       }
-      res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
+      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
     });
 };
 

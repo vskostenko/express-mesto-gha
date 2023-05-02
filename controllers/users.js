@@ -50,14 +50,17 @@ const updateProfile = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user.id;
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
-    .then(() => {
-      res.status(http2.constants.HTTP_STATUS_OK).send({ name, about });
+    .then((user) => {
+      if (user) {
+        return res.status(http2.constants.HTTP_STATUS_OK).send({ name, about});
+      }
+      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Id пользователя не найден' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
       } else if (err.name === 'CastError') {
-        res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
+        res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Передан невалидный id' });
       } else {
         res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
       }
@@ -70,13 +73,16 @@ const updateAvatar = (req, res) => {
   const userId = req.user.id;
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      res.send({ data: user });
+      if (user) {
+        return res.status(http2.constants.HTTP_STATUS_OK).send({ data: user });
+      }
+      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Id пользователя не найден' });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
       } else if (err.name === 'CastError') {
-        res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден.' });
+        res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Передан невалидный id' });
       } else {
         res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
       }
