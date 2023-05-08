@@ -2,8 +2,7 @@ const http2 = require('http2');
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not_found');
 const BadRequestError = require('../errors/bad_request');
-const AnauthorizedError = require('../errors/anauthorized');
-const ForbiddenError = require('../errors/forbidden')
+const ForbiddenError = require('../errors/forbidden');
 
 const createCard = (req, res, next) => {
   const userId = req.user._id;
