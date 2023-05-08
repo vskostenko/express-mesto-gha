@@ -105,7 +105,7 @@ const updateAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       // создадим токен
       console.log(user);
@@ -113,7 +113,9 @@ const login = (req, res, next) => {
       // вернём токен
       res.send({ token });
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      next(err);
+    });
 };
 
 const getMyProfile = (req, res, next) => {
