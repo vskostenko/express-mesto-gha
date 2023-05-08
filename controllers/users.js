@@ -15,7 +15,13 @@ const createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
     .then((newUser) => {
-      res.status(http2.constants.HTTP_STATUS_CREATED).send({ password: newUser.password });
+      res.status(http2.constants.HTTP_STATUS_CREATED).send({
+        _id: newUser._id,
+        name: newUser.name,
+        about: newUser.about,
+        avatar: newUser.avatar,
+        email: newUser.email,
+      });
     })
     .catch((err) => {
       console.log('ошибка');
