@@ -42,9 +42,12 @@ const getUsers = (req, res, next) => {
 
 const getUserByid = (req, res, next) => {
   const { id } = req.params;
+  console.log(id);
   User.findById(id)
-    .orFail(next(new NotFoundError('Пользователь с таким id не найден')))
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (user) return res.send({ user });
+      throw new NotFoundError('Пользователь по указанному id не найден');
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Пользователь по указанному _id не найден. Некорректный id'));
@@ -66,7 +69,6 @@ const updateProfile = (req, res, next) => {
   )
     .then((user) => res.send(user))
     .catch((err) => {
-      console.log(err);
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении.'));
       } else if (err.name === 'CastError') {
@@ -80,23 +82,15 @@ const updateProfile = (req, res, next) => {
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const userId = req.user._id;
-  User.findById(userId)
-    .orFail(next(new NotFoundError('Пользователь с таким id не найден')))
-    .then((user) => user.findByIdAndUpdate(
-      userId,
-      { avatar },
-      { new: true, runValidators: true },
-    ))
-    .then((user) => {
-      console.log(user);
-      if (!user) {
-        throw new NotFoundError('Пользователь по указанному _id не найден');
-      }
-      return res.status(http2.constants.HTTP_STATUS_OK).send(user);
-    })
+  User.findByIdAndUpdate(
+    userId,
+    { avatar },
+    { new: true, runValidators: true },
+  )
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении.'));
       } else if (err.name === 'CastError') {
         next(new BadRequestError('Передан невалидный id'));
       } else {
