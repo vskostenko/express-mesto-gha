@@ -1,12 +1,9 @@
 const http2 = require('http2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { celebrate, Joi } = require('celebrate');
 const User = require('../models/user');
-const { send } = require('process');
 const NotFoundError = require('../errors/not_found');
 const BadRequestError = require('../errors/bad_request');
-const AnauthorizedError = require('../errors/anauthorized');
 const ConflictError = require('../errors/conflict');
 
 const createUser = (req, res, next) => {
