@@ -1,118 +1,79 @@
 const http2 = require('http2');
 const Card = require('../models/card');
+const NotFoundError = require('../errors/not_found');
+const BadRequestError = require('../errors/bad_request');
+const AnauthorizedError = require('../errors/anauthorized');
 
-const createCard = (req, res) => {
-  console.log(req.body);
-  const { id } = req.user;
+const createCard = (req, res, next) => {
+  const userId = req.user._id;
   const {
     name, link, likes, createdAt,
   } = req.body;
   Card.create({
-    name, link, owner: id, likes, createdAt,
+    name, link, owner: userId, likes, createdAt,
   })
     .then((newCard) => {
       res.status(http2.constants.HTTP_STATUS_CREATED).send(newCard);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании карточки.${err}` });
+        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
       } else {
-        res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
+        next(err);
       }
     });
 };
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .populate(['owner', 'likes'])
     .then((cards) => {
       res.send(cards);
     })
-    .catch(() => res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' }));
+    .catch(next);
 };
 
-const getCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const { id } = req.params;
+  const userId = req.user._id;
   Card.findById(id)
     .then((card) => {
-      if (card) {
-        return res.status(200).send(card);
-      }
-      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка по указанному Id не найдена' });
+      if (!card) throw new NotFoundError('Карточка по указанному Id не найдена');
+      if (userId !== card.owner._id.toString()) throw new AnauthorizedError('Недостаточно прав для удаления карточки');
+      return card.deleteOne();
     })
-    .catch((err) => {
-      console.log(err);
-      if (err.name === 'CastError') {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
-      }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
-    });
+    .then(() => res.send({ message: 'Карточка удалена' }))
+    .catch(next);
 };
 
-const deleteCard = (req, res) => {
-  const { id } = req.params;
-  console.log(id);
-  Card.findByIdAndDelete(id)
-    .then((card) => {
-      if (!card) {
-        return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
-      }
-      return res.send({ message: 'Карточка удалена' });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка с указанным _id не найдена' });
-      } else {
-        res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
-      }
-    });
-};
-
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
-    { $addToSet: { likes: req.user.id } }, // добавить _id в массив, если его там нет
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .then((card) => {
-      if (card) {
-        return res.status(200).send(card);
-      }
-      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка по указанному Id не найдена' });
+      if (!card) throw new NotFoundError('Карточка по указанному Id не найдена');
+      return res.send(card);
     })
-    .catch((err) => {
-      console.log(err);
-      if (err.name === 'CastError') {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
-      }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
-    });
+    .catch(next);
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
-    { $pull: { likes: req.user.id } }, // убрать _id из массива
+    { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
     .then((card) => {
-      if (card) {
-        return res.send(card);
-      }
-      return res.status(http2.constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка по указанному Id не найдена' });
+      if (!card) throw new NotFoundError('Карточка по указанному Id не найдена');
+      return res.send(card);
     })
-    .catch((err) => {
-      console.log(err);
-      if (err.name === 'CastError') {
-        return res.status(http2.constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Карточка по указанному _id не найдена. Некорректный id' });
-      }
-      return res.status(http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка»' });
-    });
+    .catch(next);
 };
 
 module.exports = {
   createCard,
-  getCard,
   getCards,
   deleteCard,
   likeCard,
