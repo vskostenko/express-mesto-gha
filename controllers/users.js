@@ -5,7 +5,6 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not_found');
 const BadRequestError = require('../errors/bad_request');
 const ConflictError = require('../errors/conflict');
-const AnauthorizedError = require('../errors/anauthorized');
 
 const createUser = (req, res, next) => {
   const {
