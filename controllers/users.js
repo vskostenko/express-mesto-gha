@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not_found');
 const BadRequestError = require('../errors/bad_request');
 const ConflictError = require('../errors/conflict');
+const AnauthorizedError = require('../errors/anauthorized');
 
 const createUser = (req, res, next) => {
   const {
@@ -107,11 +108,13 @@ const login = (req, res, next) => {
 
   User.findUserByCredentials(email, password)
     .then((user) => {
-      // создадим токен
-      console.log(user);
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      // вернём токен
-      res.send({ token });
+      if (user) {
+        // создадим токен
+        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        // вернём токен
+        return res.send({ token });
+      }
+      return next();
     })
     .catch((err) => {
       next(err);
