@@ -5,7 +5,6 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not_found');
 const BadRequestError = require('../errors/bad_request');
 const ConflictError = require('../errors/conflict');
-const { error } = require('console');
 
 const createUser = (req, res, next) => {
   const {
@@ -60,7 +59,6 @@ const getUserByid = (req, res, next) => {
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
   const userId = req.user._id;
-  console.log(req.user._id);
   User.findByIdAndUpdate(
     userId,
     { name, about },
