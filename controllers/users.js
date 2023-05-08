@@ -42,7 +42,6 @@ const getUsers = (req, res, next) => {
 
 const getUserByid = (req, res, next) => {
   const { id } = req.params;
-  console.log(id);
   User.findById(id)
     .then((user) => {
       if (user) return res.send({ user });
