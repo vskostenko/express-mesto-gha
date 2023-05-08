@@ -15,7 +15,7 @@ const createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
     .then((newUser) => {
-      res.status(http2.constants.HTTP_STATUS_CREATED).send(newUser);
+      res.status(http2.constants.HTTP_STATUS_CREATED).send(newUser.password);
     })
     .catch((err) => {
       console.log('ошибка');
