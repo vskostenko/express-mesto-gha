@@ -3,6 +3,7 @@ const Card = require('../models/card');
 const NotFoundError = require('../errors/not_found');
 const BadRequestError = require('../errors/bad_request');
 const AnauthorizedError = require('../errors/anauthorized');
+const ForbiddenError = require('../errors/forbidden')
 
 const createCard = (req, res, next) => {
   const userId = req.user._id;
@@ -39,7 +40,7 @@ const deleteCard = (req, res, next) => {
   Card.findById(id)
     .then((card) => {
       if (!card) throw new NotFoundError('Карточка по указанному Id не найдена');
-      if (userId !== card.owner._id.toString()) throw new AnauthorizedError('Недостаточно прав для удаления карточки');
+      if (userId !== card.owner._id.toString()) throw new ForbiddenError('Недостаточно прав для удаления карточки');
       return card.deleteOne();
     })
     .then(() => res.send({ message: 'Карточка удалена' }))
