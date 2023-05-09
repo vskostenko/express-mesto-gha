@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
 const { errors } = require('celebrate');
 const router = require('./routes');
 
@@ -8,6 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+//автотесты не дают записать тут записать из env, на локальной машине работает
 
 app.use(router);
 app.use(errors());
@@ -27,9 +29,9 @@ app.use((err, req, res, next) => {
 });
 
 // Слушаем 3000 порт
-const { PORT = 3000 } = process.env;
+//const { PORT = 3000 } = process.env;
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log(`App listening on port ${PORT}`);
+  console.log(`App listening on port ${process.env.PORT}`);
 });

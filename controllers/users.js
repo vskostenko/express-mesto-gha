@@ -1,6 +1,7 @@
 const http2 = require('http2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const User = require('../models/user');
 const NotFoundError = require('../errors/not_found');
 const BadRequestError = require('../errors/bad_request');
@@ -105,7 +106,7 @@ const login = (req, res, next) => {
     .then((user) => {
       if (user) {
         // создадим токен
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, { expiresIn: '7d' });
         // вернём токен
         return res.send({ token });
       }
