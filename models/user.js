@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 const AnauthorizedError = require('../errors/anauthorized');
 
 const userSchema = new mongoose.Schema({
@@ -18,12 +19,16 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: /^(http|https):\/\/(www\.)?[a-zA-Z0-9\S)]#?/,
   },
   email: {
     type: String,
     required: true,
     unique: true,
     minlength: 4,
+    validate: {
+      validator: validator.isEmail,
+    },
   },
   password: {
     type: String,
