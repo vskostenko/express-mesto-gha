@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(router);
 app.use(errors());
