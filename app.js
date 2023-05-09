@@ -2,13 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const router = require('./routes');
-require('dotenv').config();
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(router);
 app.use(errors());
@@ -27,7 +26,10 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.listen(process.env.PORT, () => {
+// Слушаем 3000 порт
+const { PORT = 3000 } = process.env;
+
+app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log(`App listening on port ${process.env.PORT}`);
+  console.log(`App listening on port ${PORT}`);
 });
