@@ -105,7 +105,7 @@ const login = (req, res, next) => {
     .then((user) => {
       if (user) {
         // создадим токен
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, process.env.SECET_KEY, { expiresIn: '7d' });
         // вернём токен
         return res.send({ token });
       }
